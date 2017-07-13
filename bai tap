@@ -1,0 +1,34 @@
+Mô tả chung về bài toán:
+Bảo hiểm Nhân thọ là hình thức đảm bảo, bảo vệ tài chính và là hình thức tiết kiệm mà người tham gia sẽ đóng một khoản phí trong một khoảng thời gian giới hạn. Công ty bảo hiểm sẽ có trách nhiệm trả tiền lại cho người tham gia khi hợp đồng kết thúc hoặc khi có rủi ro xảy ra với người tham gia bảo hiểm.
+
+	Công ty Frudential là một đơn vị cung cấp dịch vụ bảo hiểm Nhân thọ, hệ thống quản lý của công ty được mô tả như sau:
+
+	1. Đối tượng tham gia bảo hiểm (khách hàng): là những người có thu nhập ổn định. Người tham gia bảo hiểm có thể dựa trên mức độ rủi ro bảo hiểm để chọn gói bảo hiểm phù hợp với mục đích của mình. Người tham gia bảo hiểm phải cung cấp các thông tin bao gồm: Họ tên, Ngày sinh, Nơi thường trú, Số chứng minh thư.
+
+	2. Gói bảo hiểm: có 3 gói bảo hiểm là:
+		- Bảo hiểm trong trường hợp tử vong
+		- Bảo hiểm sinh kỳ
+		- Bảo hiểm theo thời hạn hợp đồng.
+	Tất cả các gói bảo hiểm sẽ bao gồm các thông tin: Tên gói bảo hiểm, Thời hạn đóng, Mức phí đóng, Mục đích, Cách thức đóng (đóng một lần hoặc đóng theo tháng), Thời gian bắt đầu.
+-	Riêng bảo hiểm trong trường hợp tử vong sẽ có thêm thông tin: Trường hợp đóng bảo hiểm (bao gồm: Trường hợp tử kỳ -  người tham gia bảo hiểm không còn sống và Trường hợp trọn đời – bảo hiểm kéo dài cho đến hết cuộc đời), thời gian tối thiểu tham gia (trước khi người tham gia đóng có rủi ro).
+-	Riêng bảo hiểm sinh kỳ sẽ có thêm thông tin: Thời gian kết thúc (sẽ không xác định nếu chọn thời hạn đóng bảo hiểm là không xác định), thời gian trợ cấp (bao gồm: trợ cấp trong khoản thời gian xác định hoặc cho đến khi mất).
+-	Riêng bảo hiểm theo thời hạn hợp đồng sẽ có thêm thông tin: Thời gian kết thúc, Sản phẩm bảo hiểm đi kèm (bao gồm: bệnh hiểm nghèo, trợ cấp nằm viện và bảo hiểm thương tật vĩnh viễn).
+	Mỗi người tham gia đóng bảo hiểm chỉ được đăng ký tham gia tối đa 1 gói bảo hiểm.
+Yêu cầu 1: Thực CRUD – Khách hàng thực hiện đăng ký gói bảo hiểm nào để lưu trữ các thông tin sau: Họ tên, Ngày sinh, Nơi thường trú, Số chứng minh thư, Tên gói bảo hiểm, Thời hạn đóng, Mức phí đóng, Mục đích, Cách thức đóng, Thời gian bắt đầu, Thời gian kết thúc, Sản phẩm bảo hiểm đi kèm, Trường hợp bảo hiểm, Thời gian tối thiểu tham gia, thời gian trợ cấp.
+Yêu cầu 2: Khi hiển thị thông tin danh sách các khách hàng và thông tin các gói bảo hiểm mà khách hàng đã đăng ký lên console theo định dạng sau:
+Ho ten: Tran Thi Mai
+Ngay sinh: 11/12/1984 
+Noi thuong tru: Da nang 
+So chung minh thu: 209890786 
+Ten goi BH: BH tu vong 
+Thoi han: Khong xac dinh 
+Muc phi: 1000000 
+Muc dich: Thuc hien mai tan va chon cat 
+Cach thuc dong phi: Dong mot lan
+Thoi gian bat dau: 09/20/2015
+Thoi gian ket thuc: null
+San pham di kem: null
+Loai BH: Truong hop tu ky
+Thoi gian toi thieu tham gia: 2 thang
+Thoi gian tro cap: null
+Yêu cầu 3: Sử dụng các ngoại lệ phù hợp để giải quyết bài toán (throw  exception – try-catch)
