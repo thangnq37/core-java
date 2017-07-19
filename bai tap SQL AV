@@ -1,0 +1,114 @@
+-- CAU 1
+--a.	Tạo một khung nhìn có tên là V_KhachHang để thấy được thông tin của 
+-- tất cả các đơn hàng có ngày đặt hàng nhỏ hơn  ngày 06/15/2015
+-- của những khách hàng có địa chỉ là "Da Nang". 
+
+
+
+ALTER VIEW  V_KhachHang
+AS
+SELECT DH.*
+FROM [dbo].[DONHANG] DH, [dbo].[KHACHHANG] KH WHERE DH.MaKH = KH.MaKH AND DH.NgatDat < '06/15/2015' AND KH.DiaChi LIKE 'Da Nang'
+GO
+
+-- b.	Thông qua khung nhìn V_KhachHang thực hiện việc cập nhật ngày đặt hàng thành 06/15/2015 
+-- đối với những khách hang đặt hàng vào ngày 06/15/2014.
+
+UPDATE V_KhachHang
+SET NgatDat = '06/15/2015' 
+WHERE NgatDat = '05/15/2015'
+
+--Câu 2: Tạo 2 thủ tục:
+--a.	Thủ tục Sp_1: Dùng để xóa thông tin của những sản phẩm có mã sản phẩm được truyền 
+-- vào như một tham số của thủ tục. (1 điểm)
+CREATE PROC Sp_1(
+	@maSP varchar(10)
+)
+as
+begin
+	DELETE FROM [dbo].[SANPHAM] WHERE MaSP = @maSP
+end
+
+--b.	Thủ tục Sp_2: Dùng để bổ sung thêm bản ghi mới vào 
+-- bảng CHITIETDONHANG (Sp_2 phải thực hiện kiểm tra tính hợp lệ của dữ liệu được bổ sung là 
+-- không trùng khóa chính và đảm bảo toàn vẹn tham chiếu đến các bảng có liên quan). (1 điểm)
+
+ALTER PROC Sp_2 (
+	@maDH varchar(10),
+	@maSP varchar(10),
+	@soLuong int
+)
+AS 
+BEGIN
+DECLARE @TONGTIEN FLOAT
+  IF((NOT EXISTS(SELECT  *  FROM DONHANG DH WHERE MaDH=@maDH)) 
+	OR (NOT EXISTS(SELECT  *  FROM SANPHAM SP WHERE MaSP=@maSP)) 
+		OR (EXISTS(SELECT  *  FROM  CHITIETDONHANG WHERE MaSP=@maSP AND MaDH=@maDH)))
+	  BEGIN
+		PRINT 'INSERT NOT SUCCESS'
+	  END
+  ELSE
+	  BEGIN
+		SELECT TOP 1 @TONGTIEN=GiaTien FROM SANPHAM WHERE MaSP='SP001'
+
+		INSERT INTO [dbo].[CHITIETDONHANG]
+           ([MaDH]
+           ,[MaSP]
+           ,[SoLuong]
+           ,[TongTien])
+     VALUES
+           (@maDH
+           ,@maSP
+           ,@soLuong
+           ,@TONGTIEN*@soLuong)
+		PRINT 'INSERT SUCCESS'
+	  END
+END
+
+EXECUTE Sp_2 'DH003','SP003','2'
+--Câu 3: Viết 2 bẫy sự kiện (trigger) cho bảng CHITIETDONHANG theo yêu cầu sau:
+--a.	Trigger_1: Khi thực hiện đăng ký mới một đơn đặt hàng cho khách hàng thì 
+-- cập nhật lại số lượng sản phẩm trong bảng sản phẩm (tức là số lượng sản phẩm còn lại sau khi đã bán). 
+-- Bẫy sự kiện chỉ xử lý 1 bản ghi. (1 điểm)
+alter TRIGGER Trigger_1 ON [dbo].[CHITIETDONHANG]
+AFTER INSERT
+AS 
+BEGIN
+  DECLARE @maDH varchar(10), @maSP varchar(10), @soLuong int, @tongTien float
+  SELECT @maDH = [MaDH], @maSP =[MaSP], @soLuong =[SoLuong], @tongTien = [TongTien]
+  FROM INSERTED
+
+  IF((NOT EXISTS(SELECT  *  FROM DONHANG DH WHERE MaDH=@maDH)) 
+	OR (NOT EXISTS(SELECT  *  FROM SANPHAM SP WHERE MaSP=@maSP)) 
+		OR (EXISTS(SELECT  *  FROM  CHITIETDONHANG WHERE MaSP=@maSP AND MaDH=@maDH)))
+	  BEGIN
+		PRINT 'INSERT NOT SUCCESS'
+		ROLLBACK TRANSACTION 
+	  END
+  ELSE IF(NOT EXISTS(SELECT * FROM SANPHAM WHERE MaSP=@maSP AND SoLuong < @soLuong))
+	  BEGIN
+		PRINT 'so luong khong du'
+		ROLLBACK TRANSACTION 
+	  END
+  ELSE 
+	  BEGIN
+		UPDATE SANPHAM SET [SoLuong]=@soLuong WHERE MaSP=@maSP
+		PRINT 'Da update so luong'
+	  END
+END
+
+INSERT INTO [dbo].[CHITIETDONHANG]
+           ([MaDH]
+           ,[MaSP]
+           ,[SoLuong]
+           ,[TongTien])
+     VALUES
+           ('DH002'
+           ,'SP001'
+           ,'10'
+           ,'10000')
+--b.	Trigger_2: Khi cập nhập lại số lượng sản phẩm mà khách hàng đã đặt hàng, kiểm tra xem số lượng cập nhật có phù hợp hay không (số lượng phải lớn hơn 1 và nhỏ hơn 100). Nếu dữ liệu hợp lệ thì cho phép cập nhật, nếu không thì hiển thị thông báo "số lượng sản phẩm được đặt hàng phải nằm trong khoảng giá trị từ 1 đến 100" và thực hiện quay lui giao tác. (1 điểm)
+
+
+
+
