@@ -1,0 +1,134 @@
+
+-- Thuc hien trigger bang INSTEAD OF INSERT
+ALTER TRIGGER Trigger_1 ON CHITIETDONHANG
+INSTEAD OF INSERT
+AS
+BEGIN
+	DECLARE @maDH varchar(10),  @maSP varchar(10), @soLuong int, @giaTien float
+	SELECT @maDH=MaDH, @maSP=MaSP, @soLuong=SoLuong  FROM INSERTED
+	SELECT @giaTien=GiaTien FROM SANPHAM WHERE @maSP = MaSP
+	IF(NOT EXISTS(SELECT MaDH FROM DONHANG WHERE MaDH=@maDH))
+	BEGIN
+		PRINT 'MaDH khong ton tai trong DONHANG'
+		ROLLBACK TRANSACTION
+	END
+	ELSE IF(NOT EXISTS(SELECT MaSP FROM SANPHAM WHERE MaSP=@maSP))
+	BEGIN
+		PRINT 'MaSP khong ton tai trong SANPHAM'
+		ROLLBACK TRANSACTION
+	END
+	ELSE IF(EXISTS(SELECT MaSP, MaDH FROM CHITIETDONHANG WHERE MaSP=@maSP AND MaDH=@maDH))
+	BEGIN
+		PRINT 'MaSP va MaDH da ton tai trong CHITIETDONHANG'
+		ROLLBACK TRANSACTION
+	END
+	ELSE IF(EXISTS (SELECT * FROM SANPHAM WHERE MaSP=@maSP AND SoLuong < @soLuong))
+	BEGIN
+		PRINT 'So luong  trong SAN PHAM khong du'
+		ROLLBACK TRANSACTION
+	END
+	ELSE
+	BEGIN
+		UPDATE SANPHAM SET SoLuong=SoLuong - @soLuong WHERE MaSP = @maSP
+		INSERT INTO CHITIETDONHANG([MaDH],[MaSP],[SoLuong]) VALUES(@maDH,@maSP,@soLuong)
+		UPDATE CHITIETDONHANG SET TongTien= SoLuong * @giaTien WHERE MaDH=@maDH AND MaSP=@maSP
+		PRINT 'THU HIEN TAC VU THANH CONG'
+	END
+END
+
+--Vo hieu trigger
+DISABLE TRIGGER Trigger_1 ON CHITIETDONHANG
+
+--
+ALTER TRIGGER T_Test ON CHITIETDONHANG
+AFTER INSERT
+AS
+BEGIN
+	PRINT 'TEST'
+	DECLARE @maDH varchar(10),@maSP varchar(10),@soLuong int
+	SELECT @maDH=MaDH, @maSP=MaSP,@soLuong=SoLuong FROM INSERTED
+	--IF( (SELECT MaDH FROM CHITIETDONHANG WHERE MaSP=@maSP AND MaDH=@maDH)IS NULL)
+	--BEGIN
+	--	PRINT 'DON HANG VA SAN SAM NAY DA TON TAI'
+	--	ROLLBACK TRANSACTION
+	--END
+	--ELSE
+	BEGIN
+		IF(@maDH IS NOT NULL)
+		BEGIN
+			PRINT 'MaDH KHONG HOP LE'
+			ROLLBACK TRANSACTION
+		END
+		ELSE IF(@maSP IS NOT NULL)
+		BEGIN
+			PRINT 'MaSP KHONG HOP LE'
+			ROLLBACK TRANSACTION
+		END
+		ELSE IF(@soLuong > 0)
+		BEGIN
+			PRINT 'SO LUONG KHONG PHU HOP'
+			ROLLBACK TRANSACTION
+		END
+	END
+END
+
+
+INSERT INTO CHITIETDONHANG([MaDH],[MaSP],[SoLuong]) VALUES('DH001','SP002',100)
+
+
+ALTER proc Sp_SanPham
+AS
+BEGIN
+	declare controsp cursor
+	for select MaSP from CHITIETDONHANG
+		group by MaSP having COUNT(MaDH)>=2
+	open controsp
+	declare @maSP nvarchar(10)
+	FETCH NEXT FROM controsp
+	into @maSP
+	WHILE @@FETCH_STATUS=0
+	BEGIN
+		BEGIN TRANSACTION xoaSP;
+		print '-----------------------'
+		print 'Xoa SP co maSP = ' + @maSP
+		declare @tableDH table(MaDH nvarchar(10))
+		insert into @tableDH
+		select MaDH from CHITIETDONHANG
+		where @maSP = MaSP and MaDH in( 
+			select MaDH from CHITIETDONHANG
+			group by MaDH
+			having count(MaSP)=1)
+		DELETE FROM CHITIETDONHANG WHERE MaSP = @maSP
+		IF @@ERROR!=0
+			ROLLBACK TRANSACTION xoaSP;
+		ELSE print 'Xoa Cac CHI TIET THANH CONG '
+		DELETE FROM DONHANG WHERE MaDH in (select 
+		* from @tableDH)
+		IF @@ERROR != 0
+			ROLLBACK TRANSACTION xoaSP;
+		ELSE print 'Xoa Cac DON HANG THANH CONG '
+		DELETE FROM SANPHAM WHERE MaSP = @maSP
+		IF @@ERROR !=0
+			ROLLBACK TRANSACTION xoaSP;
+		ELSE 
+		BEGIN 
+			COMMIT TRANSACTION xoaSP;
+			print 'Xoa SP thanh cong'
+		END
+		FETCH NEXT FROM controsp
+		into @maSP
+	END
+	close controsp
+	deallocate controsp
+END
+
+
+CREATE TRIGGER Trigger_2 ON CHITIETDONHANG
+INSTEAD OF UPDATE
+AS
+BEGIN
+	DECLARE @soLuong int
+
+		
+
+END
