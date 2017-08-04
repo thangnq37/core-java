@@ -1,0 +1,161 @@
+
+
+*{
+
+	padding: 0px;
+	margin: 0px;
+}
+
+
+         /* layout header top */
+
+.wrapper-header{
+	background-color: #777
+}
+
+/* Menu top*/
+.navbar-default {
+
+	border-radius: 0px;
+}
+
+
+.panner-header{
+	height: 100px;
+}
+
+		/* Layout shadow menu */
+
+
+.shadow-menu
+{
+  position: relative;
+}
+.shadow-menu:before, .shadow-menu:after
+{
+  z-index: -1;
+  position: absolute;
+  content: "";
+  bottom: 25px;
+  left: 10px;
+  width: 50%;
+  top: 80%;
+  max-width:300px;
+  background: #908e8e;
+  box-shadow:  0 25px 30px #777;
+  transform: rotate(-8deg);
+}
+.shadow-menu:after
+{
+  transform: rotate(8deg);
+  right: 10px;
+  left: auto;
+}
+
+            /* buttom in menu top */
+
+/*wrapper-main*/
+.header-bar,.bar-left,.wrapper-main{
+	padding-left: 0px;
+	padding-right: 0px;
+}
+
+
+/* menu bar left*/
+.bar-left{
+	padding: 0px;
+}
+
+.header-bar>h3{
+	margin: 0px;
+}
+
+.menu-product{
+	border:1px;
+}
+
+.header-bar{
+	background-color: #ea4336;
+	color: #fff;
+	font-weight: 30px;
+}
+
+.menu-line:hover{
+	background-color: gray;
+}
+        /* wrapper main container*/
+
+.main-container{
+	padding-right: 0px;
+}
+/*Image*/
+.show-list-img{
+	background-color: lightgray;
+	height: 300px;
+	margin-bottom: 10px;
+}
+/*list Product path*/
+.list-product{
+	padding-left: 0px;
+	padding-right: 0px;
+}
+
+.many-items{
+	background-color: lightblue;
+	margin-bottom: 20px;
+}
+
+.header-many-items{
+	padding: 10px;
+	background-color: #ea4336;
+	color: #fff;
+	font-weight: both;
+}
+
+.contain-many-items{
+	height: 250px;
+}
+
+.content-item{
+	margin-top: 10px;
+	border:1px solid black;
+	height: 220px;
+}
+			/*Footer*/
+.footer{
+	height: 50px;
+	background-color: #ea4336;
+	color: #fff;
+	font-weight: both;
+}
+
+/*Main contain item of product*/
+.header-many-items-product{
+	padding: 10px;
+	background-color: #ea4336;
+	color: #fff;
+	font-weight: both;
+}
+.list-items-product{
+	background-color: lightblue;
+	margin-bottom: 20px;
+	padding-bottom: 100px;
+	padding-left: 0px;
+	padding-right: 0px;
+}
+
+
+.many-items-product {
+	margin-bottom: 20px;
+}
+
+
+
+
+
+
+
+
+
+
+
